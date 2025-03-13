@@ -1,0 +1,144 @@
+using System;
+
+// Clase base abstracta Llamada
+abstract class Llamada
+{
+    private string numOrigen;
+    private string numDestino;
+    private double duracion;
+
+    public Llamada(string numOrigen, string numDestino, double duracion)
+    {
+        this.numOrigen = numOrigen;
+        this.numDestino = numDestino;
+        this.duracion = duracion;
+    }
+
+    public string GetNumOrigen()
+    {
+        return numOrigen;
+    }
+
+    public string GetNumDestino()
+    {
+        return numDestino;
+    }
+
+    public double GetDuracion()
+    {
+        return duracion;
+    }
+
+    public abstract double CalculatePrecio();
+
+    public override string ToString()
+    {
+        return $"Llamada de {numOrigen} a {numDestino} con duración {duracion} segundos.";
+    }
+}
+
+// Clase LlamadaLocal
+class LlamadaLocal : Llamada
+{
+    private const double PRECIO_POR_SEGUNDO = 0.15;
+
+    public LlamadaLocal(string numOrigen, string numDestino, double duracion)
+        : base(numOrigen, numDestino, duracion)
+    {
+    }
+
+    public override double CalculatePrecio()
+    {
+        return GetDuracion() * PRECIO_POR_SEGUNDO;
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() + $" Costo: {CalculatePrecio():0.00} pesos.";
+    }
+}
+
+// Clase LlamadaProvincial
+class LlamadaProvincial : Llamada
+{
+    private const double PRECIO_FRANJA_1 = 0.20;
+    private const double PRECIO_FRANJA_2 = 1.25;
+    private const double PRECIO_FRANJA_3 = 0.30;
+    private int franja;
+
+    public LlamadaProvincial(string numOrigen, string numDestino, double duracion, int franja)
+        : base(numOrigen, numDestino, duracion)
+    {
+        this.franja = franja;
+    }
+
+    public override double CalculatePrecio()
+    {
+        switch (franja)
+        {
+            case 1:
+                return GetDuracion() * PRECIO_FRANJA_1;
+            case 2:
+                return GetDuracion() * PRECIO_FRANJA_2;
+            case 3:
+                return GetDuracion() * PRECIO_FRANJA_3;
+            default:
+                return 0;
+        }
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() + $" Costo: {CalculatePrecio():0.00} pesos.";
+    }
+}
+
+// Clase Centralita
+class Centralita
+{
+    private int contadorLlamadas;
+    private double acumuladoCostes;
+
+    public Centralita()
+    {
+        this.contadorLlamadas = 0;
+        this.acumuladoCostes = 0.0;
+    }
+
+    public void RegistrarLlamada(Llamada llamada)
+    {
+        contadorLlamadas++;
+        acumuladoCostes += llamada.CalculatePrecio();
+        Console.WriteLine(llamada);
+    }
+
+    public int GetTotalLlamadas()
+    {
+        return contadorLlamadas;
+    }
+
+    public double GetTotalFacturacion()
+    {
+        return acumuladoCostes;
+    }
+}
+
+// Clase principal Program
+class Program
+{
+    static void Main(string[] args)
+    {
+        Centralita centralita = new Centralita();
+
+        LlamadaLocal llamadaLocal1 = new LlamadaLocal("8090000000", "8290000000", 120);
+        LlamadaProvincial llamadaProvincial1 = new LlamadaProvincial("8090000000", "8290000000", 180, 2);
+        LlamadaLocal llamadaLocal2 = new LlamadaLocal("8090000000", "8290000000", 60);
+
+        centralita.RegistrarLlamada(llamadaLocal1);
+        centralita.RegistrarLlamada(llamadaProvincial1);
+        centralita.RegistrarLlamada(llamadaLocal2);
+
+        Console.WriteLine($"Llamadas en total: {centralita.GetTotalLlamadas()}");
+        Console.WriteLine($"Facturacion: {centralita.GetTotalFacturacion():0.00} pesos.");
+    }
+}
