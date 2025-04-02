@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+
+class Llamada
+{
+    public string NumerOrigen { get; set; }
+    public string NumerDestino { get; set; }
+    public int Duracion { get; set; }
+    public double Costo { get; set; }
+
+    public Llamada(string numerOrigen, string numerDestino, int duracion, double costo)
+    {
+        NumerOrigen = numerOrigen;
+        NumerDestino = numerDestino;
+        Duracion = duracion;
+        Costo = costo * 60;
+    }
+
+    public void MostrarInfo()
+    {
+        Console.WriteLine($"Origen: {NumerOrigen} - Destino: {NumerDestino} - Duración: {Duracion} segundos - Costo: {Costo:N2} DOP");
+    }
+}
+
+class Centralita
+{
+    private List<Llamada> registros = new List<Llamada>();
+
+    public void RegistrarLlamada(string origen, string destino, int duracion, double costo)
+    {
+        registros.Add(new Llamada(origen, destino, duracion, costo));
+        Console.WriteLine("Llamada registrada con éxito.");
+    }
+
+    public void MostrarRegistros()
+    {
+        Console.WriteLine("\nRegistros de llamadas:");
+        foreach (var llamada in registros)
+        {
+            llamada.MostrarInfo();
+        }
+    }
+}
+
+class Programa
+{
+    static void Main()
+    {
+        Centralita centralita = new Centralita();
+        centralita.RegistrarLlamada("809-000-0000", "829-000-0000", 120, 15.75);
+        centralita.RegistrarLlamada("829-111-1111", "809-111-1111", 300, 45.50);
+        centralita.MostrarRegistros();
+    }
+}
